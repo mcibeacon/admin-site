@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>Beacon Management</h1>
+<h2>Login</h2>
+
+<form method="POST">
+    {{ form.csrf_token }}
+    {{ form.username.label }} {{ form.username(size=20) }}
+    {{ form.password.label }} {{ form.password(size=20) }}
+    <br><br>
+    {{ form.remember_me.label }} {{ form.remember_me }}
+    <input type="submit" value="Login">
+</form>
+{% if error %}
+<p class="error"><strong>Error:</strong> {{ error }}</p>
+{% endif %}
+{% endblock %}

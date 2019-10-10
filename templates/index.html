@@ -1,0 +1,98 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>Beacon Management</h1>
+
+{% if role is lt(2) %}
+<div id="article-form">
+    <h2>Upload articles</h2>
+    <p>Only upload .doc, .docx or .md files.</p>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="form_name" value="article_form">
+
+        {{ article_form.csrf_token }}
+        {{ article_form.title.label }} {{ article_form.title }}
+        <br>
+        {{ article_form.file.label }} {{ article_form.file }}
+        <br>
+        {{ article_form.author.label }} {{ article_form.author }}
+        <br>
+        {{ article_form.photo.label }} {{ article_form.photo }}
+        <br>
+        {{ article_form.bear_air.label }} {{ article_form.bear_air }}
+        <br>
+        <br>
+        <input type="submit" value="Upload">
+    </form>
+    {% if article_form_error %}
+    <p class="error"><strong>Error:</strong> {{ article_form_error }}</p>
+    {% endif %}
+</div>
+{% endif %}
+{% if role is lt(3) %}
+<div id="layout-form">
+    <h2>Homepage Layout</h2>
+    <p>Change how articles appear on the homepage.</p>
+    <form method="POST">
+        <input type="hidden" name="form_name" value="layout_form">
+
+        {{ layout_form.csrf_token }}
+        <h3>Sticky</h3>
+        Select an article to be made "sticky". This means it will appear big and
+        in a light green box on the homepage. Multiple articles can be made "sticky",
+        but usually just one looks best.
+        <br>
+        {{ layout_form.sticky.label }} {{ layout_form.sticky }}
+        <br>
+        {{ layout_form.replace_current_sticky.label }} {{ layout_form.replace_current_sticky }}
+        <br>
+
+        <h3>Featured</h3>
+        Modify the articles on the Featured sidebar that appears on the homepage and underneath articles.
+        <br>
+        {{ layout_form.featured_add.label }} {{ layout_form.featured_add }}
+        <br>
+        {{ layout_form.featured_remove.label }} {{ layout_form.featured_remove }}
+        <br>
+        {{ layout_form.remove_all_featured.label }} {{ layout_form.remove_all_featured }}
+        <br>
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+    {% if layout_form_error %}
+    <p class="error"><strong>Error:</strong> {{ layout_form_error }}</p>
+    {% endif %}
+</div>
+{% endif %}
+{% if role is lt(1) %}
+<div id="admin_form">
+    <h2>Delete Articles</h2>
+    <p>Use with caution, but Cole can bring them back.</p>
+    <p>If you want to delete many articles at once, ask Cole.</p>
+    <form method="POST">
+        <input type="hidden" name="form_name" value="admin_form">
+
+        {{ admin_form.csrf_token }}
+        {{ admin_form.articles.label }} {{ admin_form.articles }}
+        <br>
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+    {% if admin_form_error %}
+    <p class="error"><strong>Error:</strong> {{ admin_form_error }}</p>
+    {% endif %}
+</div>
+{% endif %}
+{% if role is lt(3) %}
+<div id="force_update_form">
+    <h2>Force an update of the main website</h2>
+    <p>Don't spam this button, use it if you've waited for ~5 minutes and your article hasn't appeared.</p>
+    <p>Keep in mind updates to the site (using this button or others) will take a few minutes to show up.</p>
+    <form method="POST">
+        {{ force_update_form.csrf_token }}
+        
+        <input type="hidden" name="form_name" value="force_update_form">
+        <input type="submit" value="Force Update">
+    </form>
+</div>
+{% endif %}
+{% endblock %}
