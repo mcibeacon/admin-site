@@ -42,9 +42,6 @@
     2. Go into `_site`
     3. `git commit -am "something"`
     4. `git push`
-       - [ ] **Credentials??**
-         - Try `git push https://name:password@github.com/name/repo.git`
-         - Separate bot acccount?
   - Options
     - Run within Python script
     - [x] **Spawn separate Bash process**
