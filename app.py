@@ -34,7 +34,7 @@ with open("secret_key", "r") as f:
     app.secret_key = eval(f.readlines()[0].strip())
 
 # *** Setup Database ***
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/makeworld/mcibeacon/admin-site/users.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Save memory
 db = SQLAlchemy(app)
 
@@ -72,13 +72,13 @@ logging.basicConfig(filename='app.log', level=logging.INFO, format='%(asctime)s:
 
 def user_log(msg, level=logging.INFO):
     if level == logging.INFO:
-        logging.info(current_user + ": " + msg)
+        logging.info(str(current_user) + ": " + msg)
     elif level == logging.WARNING:
-        logging.warning(current_user + ": " + msg)
+        logging.warning(str(current_user) + ": " + msg)
     elif level == logging.ERROR:
-        logging.error(current_user + ": " + msg)
+        logging.error(str(current_user) + ": " + msg)
     elif level == logging.CRITICAL:
-        logging.critical(current_user + ": " + msg)
+        logging.critical(str(current_user) + ": " + msg)
 
 
 def is_safe_url(target):
@@ -265,7 +265,7 @@ class User(db.Model, flask_login.UserMixin):
     role = db.Column(db.Integer)  # 0 is admin/chiefs, 1 is for copy editors, 2 is for layout
 
     def __repr__(self):
-        return f'<User {self.username}>'
+        return f'{self.username}'
 
     def get_id(self):
         # For flask_login
@@ -468,6 +468,14 @@ def index():
             except FileNotFoundError:
                 admin_form_error = "That file is already deleted."
                 user_log("Tried to delete a file that doesn't exist", level=logging.ERROR)
+            except shutil.Error:
+                # Hopefully a "Destination path X already exists" error
+                # Which means an already deleted file has the same name
+                # XXX: The already-deleted file is permanently deleted
+                os.remove(os.path.join(DELETED_ARTICLES_PATH, admin_form.articles.data))
+                shutil.move(_find_article_path(admin_form.articles.data), DELETED_ARTICLES_PATH)
+                change = True
+                user_log("Permanently deleted, and then temp-deleted article " + admin_form.articles.data)
         else:
             admin_form_error = "Error with submission."
             user_log("Error with admin form submission: " + admin_form.errors)
@@ -482,8 +490,8 @@ def index():
         if current_user.role < 2:
             admin_form.articles.choices = article_choices
 
-    if change:
-        Popen("./update_articles.sh")  # TODO: Test this
+    #if change:
+        #Popen("./update_articles.sh")  # TODO: Test this
 
     # Role determines what forms are displayed
     return render_template('index.html', role=current_user.role, layout_form=layout_form, article_form=article_form,

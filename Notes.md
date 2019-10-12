@@ -45,14 +45,15 @@
   - Options
     - Run within Python script
     - [x] **Spawn separate Bash process**
-      - [ ] Test it
+      - [x] Test it
     - Have a separate script that checks for new files every 5 mins and adds them
   - Notes
     - [x] Some sort of lock could be required so multiple threads don't try it at once
 - [ ] Add to Github
 - [x] Force update button
-  - [ ] Test (script too)
-- [ ] Test `reset.sh`
+  - [x] Test (script too)
+- [x] Test `reset.sh`
+- [x] Test deleting an article that is already in deletions
 
 
 ## Roles
