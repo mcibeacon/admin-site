@@ -24,17 +24,17 @@ import logging
 from subprocess import Popen
 
 
-STATIC_SITE_PATH = "../Static Site"
+STATIC_SITE_PATH = "../static-site"
 UPLOADS_DIR = "uploads"
 DELETED_ARTICLES_PATH = "deletions"
 
 app = Flask(__name__)
 # Read secret key from git-ignored file for security
 with open("secret_key", "r") as f:
-    app.secret_key = eval(f.readlines().strip())
+    app.secret_key = eval(f.readlines()[0].strip())
 
 # *** Setup Database ***
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/makeworld/Desktop/Coding/Web/mcibeacon/Management Site/users.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/makeworld/mcibeacon/admin-site/users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Save memory
 db = SQLAlchemy(app)
 
