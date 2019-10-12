@@ -9,8 +9,8 @@ if [ ! -f update_articles.lock ]; then
     cd _site
     if [[ "$(git status --porcelain)" ]]; then
         git add .
-        git commit -m "Bot update"  # TODO: Change this
-        git push https://:password@github.com/name/repo.git  # TODO: Add bot name and password, not to Github though
+        git commit -m "Bot update"  # Change this
+        git push https://username:password@github.com/name/repo.git  # Add bot name and password, not to Github though
     fi
     rm update_articles.lock
 else
