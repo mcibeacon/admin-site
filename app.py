@@ -490,8 +490,8 @@ def index():
         if current_user.role < 2:
             admin_form.articles.choices = article_choices
 
-    #if change:
-        #Popen("./update_articles.sh")  # TODO: Test this
+    if change:
+        Popen("./update_articles.sh")  # TODO: Test this
 
     # Role determines what forms are displayed
     return render_template('index.html', role=current_user.role, layout_form=layout_form, article_form=article_form,
