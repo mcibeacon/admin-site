@@ -284,7 +284,7 @@ for user in range(1, User.query.count()):  # Skip admin account
 MEMBERS_TUPLES.extend([("jvilladarez", "Jeremy Villadarez"), ("ssagar", "Swamini Sagar"), ("pdhugga", "Parneet Dhugga"),
                        ("asajjad", "Ahreema Sajjad"), ("mmohamed", "Muna Mohamed"), ("aabdul", "Aysha Abdul"),
                        ("rmatharu", "Rhea Matharu"), ("tpatel", "Tvisha Patel"), ("smahmud", "Sanaa Mahmud "),
-                       ("hnur", "Huda Nur")])
+                       ("hnur", "Huda Nur"), ("ekim", "Emily Kim")])
 
 
 class ArticleForm(FlaskForm):
