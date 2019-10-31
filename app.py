@@ -478,7 +478,7 @@ def index():
                 user_log("Permanently deleted, and then temp-deleted article " + admin_form.articles.data)
         else:
             admin_form_error = "Error with submission."
-            user_log("Error with admin form submission: " + admin_form.errors)
+            user_log("Error with admin form submission: " + str(admin_form.errors))
 
     if force_update_form.is_submitted() and request.form["form_name"] == "force_update_form":
         if force_update_form.validate():  # For CSRF
