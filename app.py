@@ -124,6 +124,11 @@ def prepend(file, text):
 
 
 def _find_article_path(file):
+    """Finds the path of article, given the full filename.
+
+    Looks in the regular articles directory first, then Bear Air.
+    """
+
     filepath = os.path.join(STATIC_SITE_PATH, "articles/_posts/", file)
     if not os.path.isfile(filepath):
         filepath = os.path.join(STATIC_SITE_PATH, "bear_air/_posts/", file)
@@ -131,6 +136,21 @@ def _find_article_path(file):
             raise FileNotFoundError
 
     return filepath
+
+
+def _find_article_image_path(file):
+    """Given the full filename of an article, it finds the image for that article, if any.
+
+    Raises FileNotFoundError if the image cannot be found / doesn't exist.
+    """
+
+    print("*** Article", file)
+    front_matter = get_front_matter(file)
+    print("*** Front matter", front_matter)
+    if "image" in front_matter:
+        return os.path.join(STATIC_SITE_PATH, front_matter["image"])
+    else:
+        raise FileNotFoundError
 
 
 def _front_matter_line_indexes(file):
@@ -279,12 +299,14 @@ MEMBERS_TUPLES = [("", "")]  # Empty starter to detect if no author was selected
 users = User.query.all()
 for user in range(1, User.query.count()):  # Skip admin account
     MEMBERS_TUPLES.append((users[user].username, users[user].fullname))
-# Now add all potential authors who don't have accounts
+# Now add all potential authors who don't have accounts, from the authors file
 # TODO: Authors are incomplete
-MEMBERS_TUPLES.extend([("jvilladarez", "Jeremy Villadarez"), ("ssagar", "Swamini Sagar"), ("pdhugga", "Parneet Dhugga"),
-                       ("asajjad", "Ahreema Sajjad"), ("mmohamed", "Muna Mohamed"), ("aabdul", "Aysha Abdul"),
-                       ("rmatharu", "Rhea Matharu"), ("tpatel", "Tvisha Patel"), ("smahmud", "Sanaa Mahmud "),
-                       ("hnur", "Huda Nur"), ("ekim", "Emily Kim")])
+with open("authors.txt", "r") as f:
+    line = f.readline()
+    while line:
+        if line.strip() != "":
+            MEMBERS_TUPLES.extend([eval(line)])
+        line = f.readline()
 
 
 class ArticleForm(FlaskForm):
@@ -461,13 +483,14 @@ def index():
 
     if admin_form.is_submitted() and request.form["form_name"] == "admin_form":
         if admin_form.validate() and admin_form.articles.data != "":
+            # Try to send article to trash
             try:
                 shutil.move(_find_article_path(admin_form.articles.data), DELETED_ARTICLES_PATH)
-                change = True
                 user_log("Deleted article " + admin_form.articles.data)
+                change = True
             except FileNotFoundError:
-                admin_form_error = "That file is already deleted."
-                user_log("Tried to delete a file that doesn't exist", level=logging.ERROR)
+                admin_form_error = "That article is already deleted."
+                user_log("Tried to delete an article that doesn't exist", level=logging.ERROR)
             except shutil.Error:
                 # Hopefully a "Destination path X already exists" error
                 # Which means an already deleted file has the same name
@@ -476,6 +499,21 @@ def index():
                 shutil.move(_find_article_path(admin_form.articles.data), DELETED_ARTICLES_PATH)
                 change = True
                 user_log("Permanently deleted, and then temp-deleted article " + admin_form.articles.data)
+            
+            # Now try to delete article photo if it exists
+            try:
+                shutil.move(_find_article_image_path(admin_form.articles.data), DELETED_ARTICLES_PATH)
+                user_log("Deleted article image for" + admin_form.articles.data)
+            except FileNotFoundError:
+                pass  # No article image
+            except shutil.Error:
+                # Hopefully a "Destination path X already exists" error
+                # Which means an already deleted file has the same name
+                # XXX: The already-deleted file is permanently deleted
+                os.remove(os.path.join(DELETED_ARTICLES_PATH, os.path.basename(_find_article_image_path(admin_form.articles.data))))
+                shutil.move(_find_article_path(admin_form.articles.data), DELETED_ARTICLES_PATH)
+                change = True
+                user_log("Permanently deleted, and then temp-deleted article photo for" + admin_form.articles.data)
         else:
             admin_form_error = "Error with submission."
             user_log("Error with admin form submission: " + str(admin_form.errors))
@@ -491,8 +529,7 @@ def index():
             admin_form.articles.choices = article_choices
 
     if change:
-        Popen("./update_articles.sh")  # TODO: Test this
-
+        Popen("./update_articles.sh")
     # Role determines what forms are displayed
     return render_template('index.html', role=current_user.role, layout_form=layout_form, article_form=article_form,
                            admin_form=admin_form, force_update_form=force_update_form, layout_form_error=layout_form_error,
@@ -535,10 +572,10 @@ def login():
 @app.route('/logout')
 @flask_login.login_required
 def logout():
-    flask_login.logout_user()
     user_log("Logged out")
+    flask_login.logout_user()
     return redirect(url_for("index"))
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

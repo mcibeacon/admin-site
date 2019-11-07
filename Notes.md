@@ -1,5 +1,10 @@
 # Notes
 
+## Bugs
+- [ ] Images for articles aren't deleted along with articles
+  - [ ] Front matter error - print isn't even running??
+- [ ] Image files left in `uploads` folder
+
 ## Links
 - Flask for web server
 - Users

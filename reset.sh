@@ -4,4 +4,5 @@
 # It should be used by systemd for a restart, maybe
 
 rm uploads/*
+touch uploads/.gitempty
 rm update_articles.lock
