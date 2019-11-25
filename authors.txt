@@ -3,7 +3,6 @@
 ("pdhugga", "Parneet Dhugga")
 ("asajjad", "Ahreema Sajjad")
 ("mmohamed", "Muna Mohamed")
-("aabdul", "Aysha Abdul")
 ("rmatharu", "Rhea Matharu")
 ("tpatel", "Tvisha Patel")
 ("smahmud", "Sanaa Mahmud ")
