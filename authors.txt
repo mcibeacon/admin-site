@@ -1,4 +1,4 @@
-("jvilladarez", "Jeremy Villadarez")
+("jvilladarez", "Jeremy Ricci Villadarez")
 ("ssagar", "Swamini Sagar")
 ("pdhugga", "Parneet Dhugga")
 ("asajjad", "Ahreema Sajjad")
@@ -23,3 +23,8 @@
 ("amehta", "Ambika Mehta")
 ("ezhang", "Elena Zhang")
 ("rsyed", "Rida Syed")
+
+("lbaumgart", "Luke Baumgart")
+("aaden-sabriye", "Aaliyah Aden-Sabriye")
+("sliao", "Susanna Liao")
+("dbrebeanu", "Diana Brebeanu")
