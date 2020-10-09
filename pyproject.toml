@@ -14,7 +14,7 @@ WTForms = "^2.2.1"
 argon2-cffi = "^19.1.0"
 pypandoc = "^1.4"
 PyYAML = "^5.1.2"
-gunicorn = "19.9.0"
+gunicorn = {version = "19.9.0", extras = ["eventlet"]}
 
 [tool.poetry.dev-dependencies]
 
