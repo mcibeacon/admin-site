@@ -7,7 +7,6 @@ base="$(pwd)"
 if [ ! -f update_articles.lock ]; then
     touch update_articles.lock
     cd "../static-site"
-    bundle exec jekyll build
     if [[ "$(git status --porcelain)" ]]; then
         git add .
         git commit -m "Bot update"  # Change this
