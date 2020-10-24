@@ -22,11 +22,16 @@ import shutil
 import yaml
 import logging
 from subprocess import Popen
+import platform
 
 
-STATIC_SITE_PATH = "../static-site"
+STATIC_SITE_PATH = os.path.join("..", "static-site")
 UPLOADS_DIR = "uploads"
 DELETED_ARTICLES_PATH = "deletions"
+
+# Only considered in production on my server
+PROD = platform.node() == "jupiter"
+
 
 app = Flask(__name__)
 # Read secret key from git-ignored file for security
@@ -529,7 +534,10 @@ def index():
             admin_form.articles.choices = article_choices
 
     if change:
-        Popen("./update_articles.sh")
+        if PROD:
+            Popen("./update_articles.sh")
+        else:
+            user_log("Skipped actually updating because not running in production")
     # Role determines what forms are displayed
     return render_template('index.html', role=current_user.role, layout_form=layout_form, article_form=article_form,
                            admin_form=admin_form, force_update_form=force_update_form, layout_form_error=layout_form_error,
